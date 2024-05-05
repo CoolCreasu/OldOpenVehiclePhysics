@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace VehiclePhysics
@@ -6,6 +7,7 @@ namespace VehiclePhysics
     {
         #region Variables
         public float brakeTorque = 0.0f; // make property if working correctly!
+        public float motorTorque = 0.0f;
 
         [Header("Wheel")]
         [SerializeField] private float radius = 0.34f;
@@ -159,15 +161,17 @@ namespace VehiclePhysics
             float brakeTorqueLimit = -AngularVelocity / deltaTime * inertia;
 
             // caalculate the net torque
-            float netTorque = frictionTorque;
+            float netTorque = frictionTorque + signedBrakeTorque + motorTorque;
 
             // ensure net torque does not exceed limits
-            if ((Mathf.Sign(netTorque) == Mathf.Sign(frictionTorqueLimit)) && (Mathf.Abs(netTorque) > Mathf.Abs(frictionTorqueLimit)))
+            //if ((Mathf.Sign(netTorque) == Mathf.Sign(frictionTorqueLimit)) && (Mathf.Abs(netTorque) > Mathf.Abs(frictionTorqueLimit)))
+            if ((Mathf.Sign(netTorque) == Mathf.Sign(frictionTorqueLimit)) && (Mathf.Abs(netTorque) > Mathf.Abs(frictionTorqueLimit)) && (Mathf.Abs(frictionTorque) >= Mathf.Abs(netTorque - frictionTorque)))
             {
                 netTorque = frictionTorqueLimit;
             }
 
-            if ((Mathf.Sign(netTorque) == Mathf.Sign(signedBrakeTorque)) && (Mathf.Abs(netTorque) > Mathf.Abs(brakeTorqueLimit)) && (absBrakeTorque > 0))
+            //if ((Mathf.Sign(netTorque) == Mathf.Sign(signedBrakeTorque)) && (Mathf.Abs(netTorque) > Mathf.Abs(brakeTorqueLimit)) && (absBrakeTorque > 0))
+            if ((Mathf.Sign(netTorque) == Mathf.Sign(signedBrakeTorque)) && (Mathf.Abs(netTorque) > Mathf.Abs(brakeTorqueLimit)) && (absBrakeTorque > 0) && (Mathf.Abs(signedBrakeTorque) >= Mathf.Abs(netTorque - signedBrakeTorque)))
             {
                 netTorque = brakeTorqueLimit;
             }
