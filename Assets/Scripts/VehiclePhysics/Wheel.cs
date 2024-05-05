@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace VehiclePhysics
@@ -38,6 +37,10 @@ namespace VehiclePhysics
 
         private Vector3 globalVelocity = Vector3.zero;
         private Vector2 localVelocity = Vector2.zero;
+
+        private Vector2 localGravitationalForce = Vector2.zero; // required force to prevent sliding due to gravity.
+        private Vector2 localVelocityCounterForce = Vector2.zero; // required force to stop car's velocity (not accounting gravity)
+        private Vector2 combinedCounterForce = Vector2.zero; // required force to keep car still
 
         private float inertia = 0.0f;
 
@@ -111,14 +114,41 @@ namespace VehiclePhysics
             localVelocity.x = Vector3.Dot(globalVelocity, projectedRight);
 
             // =================================================================================================================== //
+            //  Counter force calculation
+            // =================================================================================================================== //
+
+            Vector3 gravitationalForce = -Physics.gravity.normalized * Load * Vector3.Dot(-Physics.gravity.normalized, hitResult.normal);
+            gravitationalForce = Vector3.ProjectOnPlane(gravitationalForce, hitResult.normal);
+            localGravitationalForce.y = Vector3.Dot(gravitationalForce, projectedForward);
+            localGravitationalForce.x = Vector3.Dot(gravitationalForce, projectedRight);
+
+            localVelocityCounterForce = -localVelocity * (Load / Physics.gravity.magnitude) / deltaTime;
+
+            combinedCounterForce = localGravitationalForce + localVelocityCounterForce;
+
+            // =================================================================================================================== //
             //  Force related calculations
             // =================================================================================================================== //
 
-            // torques
+            // Angular Velocity
+            
+            // calculate the friction torque and the max possible friction torque
             float frictionTorque = frictionCurve.Evaluate(localVelocity.y / radius - AngularVelocity) * Load * radius;
             float frictionTorqueLimit = (localVelocity.y / radius - AngularVelocity) / deltaTime * inertia;
 
-            // forces
+            // caalculate the net torque
+            float netTorque = frictionTorque;
+
+            // ensure net torque does not exceed limits
+            if ((Mathf.Sign(netTorque) == Mathf.Sign(frictionTorqueLimit)) && (Mathf.Abs(netTorque) > Mathf.Abs(frictionTorqueLimit)))
+            {
+                netTorque = frictionTorqueLimit;
+            }
+
+            // calculate the new angular velocity
+            AngularVelocity = AngularVelocity + (netTorque / inertia * deltaTime);
+
+            // Linear velocity
             float netForce = 0.0f;
             if (frictionTorqueLimit > 0.0f)
             {
@@ -130,7 +160,7 @@ namespace VehiclePhysics
             }
             netForce = netForce / radius;
 
-            wheelForce = projectedForward * (netForce) + projectedRight * (0.0f);
+            wheelForce = projectedForward * (netForce) + projectedRight * (combinedCounterForce.x);
             cachedRigidbody.AddForceAtPosition(wheelForce, cachedPosition - wheelUp * currentSuspensionDistance);
 
             // =================================================================================================================== //
@@ -140,6 +170,7 @@ namespace VehiclePhysics
             // visuals
             visualTransform.localPosition = new Vector3(0, -currentSuspensionDistance, 0);
             visualRotation = visualRotation + (AngularVelocity * Mathf.Rad2Deg * deltaTime);
+            visualRotation = visualRotation > 360 ? visualRotation - 360 : visualRotation < 0 ? visualRotation + 360 : visualRotation;
             visualTransform.localEulerAngles = new Vector3(visualRotation, SteerAngle, 0.0f);
         }
         #endregion
