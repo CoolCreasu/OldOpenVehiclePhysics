@@ -163,9 +163,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 151f25ef0eb91fb4cb0a9fdc46a8c0f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  brakeTorque: 0
+  motorTorque: 0
   radius: 0.34
   mass: 20
-  lowSpeedfrictionThreshold: 3
+  lowSpeedFrictionThreshold: 3
   frictionCurve:
     serializedVersion: 2
     m_Curve:
@@ -268,9 +270,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 151f25ef0eb91fb4cb0a9fdc46a8c0f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  brakeTorque: 0
+  motorTorque: 0
   radius: 0.34
   mass: 20
-  lowSpeedfrictionThreshold: 3
+  lowSpeedFrictionThreshold: 3
   frictionCurve:
     serializedVersion: 2
     m_Curve:
@@ -469,9 +473,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 151f25ef0eb91fb4cb0a9fdc46a8c0f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  brakeTorque: 0
+  motorTorque: 0
   radius: 0.34
   mass: 20
-  lowSpeedfrictionThreshold: 3
+  lowSpeedFrictionThreshold: 3
   frictionCurve:
     serializedVersion: 2
     m_Curve:
@@ -539,6 +545,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8613928392505417574}
   - component: {fileID: 3794093744359531894}
+  - component: {fileID: 2003125503046070624}
   m_Layer: 0
   m_Name: Impreza
   m_TagString: Untagged
@@ -595,6 +602,23 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1
+--- !u!114 &2003125503046070624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6929679705342949689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e4a0841239393f46833dd5bde1eb2b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheelFrontLeft: {fileID: 3551061879526759021}
+  wheelFrontRight: {fileID: 2099199343521578959}
+  wheelRearLeft: {fileID: 4728798906782103334}
+  wheelRearRight: {fileID: 4532851596294423766}
+  maxSteerAngle: 45
 --- !u!1 &7213032166605696539
 GameObject:
   m_ObjectHideFlags: 0
@@ -640,9 +664,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 151f25ef0eb91fb4cb0a9fdc46a8c0f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  brakeTorque: 0
+  motorTorque: 0
   radius: 0.34
   mass: 20
-  lowSpeedfrictionThreshold: 3
+  lowSpeedFrictionThreshold: 3
   frictionCurve:
     serializedVersion: 2
     m_Curve:
