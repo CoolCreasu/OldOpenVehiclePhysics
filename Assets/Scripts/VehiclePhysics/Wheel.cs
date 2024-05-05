@@ -149,18 +149,25 @@ namespace VehiclePhysics
             AngularVelocity = AngularVelocity + (netTorque / inertia * deltaTime);
 
             // Linear velocity
-            float netForce = 0.0f;
+
+            // Longitudinal force
+            float longitudinalForce = 0.0f;
             if (frictionTorqueLimit > 0.0f)
             {
-                netForce = -(frictionTorque > frictionTorqueLimit ? frictionTorqueLimit : frictionTorque);
+                longitudinalForce = -(frictionTorque > frictionTorqueLimit ? frictionTorqueLimit : frictionTorque);
             }
             else
             {
-                netForce = -(frictionTorque < frictionTorqueLimit ? frictionTorqueLimit : frictionTorque);
+                longitudinalForce = -(frictionTorque < frictionTorqueLimit ? frictionTorqueLimit : frictionTorque);
             }
-            netForce = netForce / radius;
+            longitudinalForce = longitudinalForce / radius;
 
-            wheelForce = projectedForward * (netForce) + projectedRight * (combinedCounterForce.x);
+            // Lateral force
+            float lateralForce = 0.0f;
+            lateralForce = frictionCurve.Evaluate(-localVelocity.x) * Load;
+            lateralForce = Mathf.Clamp(combinedCounterForce.x, -Mathf.Abs(lateralForce), Mathf.Abs(lateralForce));
+
+            wheelForce = projectedForward * (longitudinalForce) + projectedRight * (lateralForce);
             cachedRigidbody.AddForceAtPosition(wheelForce, cachedPosition - wheelUp * currentSuspensionDistance);
 
             // =================================================================================================================== //
