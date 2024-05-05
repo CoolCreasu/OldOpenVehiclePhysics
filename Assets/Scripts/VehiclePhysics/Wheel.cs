@@ -8,11 +8,16 @@ namespace VehiclePhysics
         [Header("Wheel")]
         [SerializeField] private float radius = 0.34f;
         [SerializeField] private float mass = 20.0f;
+
+        [Header("Friction")]
+        [SerializeField] private float lowSpeedfrictionThreshold = 3.0f; // alternative friction to prevent sliding at low slip speed
         [SerializeField] private AnimationCurve frictionCurve = new AnimationCurve();
+        
         [Header("Suspension")]
         [SerializeField] private float suspensionDistance = 0.5f;
         [SerializeField] private float springRate = 50000.0f;
         [SerializeField] private float damperRate = 2500.0f;
+        
         [Header("Collision")]
         [SerializeField] private LayerMask collisionLayers = -1;
 
@@ -37,6 +42,9 @@ namespace VehiclePhysics
 
         private Vector3 globalVelocity = Vector3.zero;
         private Vector2 localVelocity = Vector2.zero;
+
+        private Vector2 slip = Vector2.zero;
+        private bool lowSpeedFriction = false;
 
         private Vector2 localGravitationalForce = Vector2.zero; // required force to prevent sliding due to gravity.
         private Vector2 localVelocityCounterForce = Vector2.zero; // required force to stop car's velocity (not accounting gravity)
@@ -114,6 +122,14 @@ namespace VehiclePhysics
             localVelocity.x = Vector3.Dot(globalVelocity, projectedRight);
 
             // =================================================================================================================== //
+            //  Slip calculations
+            // =================================================================================================================== //
+
+            slip.y = localVelocity.y - AngularVelocity * radius;
+            slip.x = -localVelocity.x;
+            lowSpeedFriction = slip.magnitude <= lowSpeedfrictionThreshold;
+
+            // =================================================================================================================== //
             //  Counter force calculation
             // =================================================================================================================== //
 
@@ -133,8 +149,8 @@ namespace VehiclePhysics
             // Angular Velocity
             
             // calculate the friction torque and the max possible friction torque
-            float frictionTorque = frictionCurve.Evaluate(localVelocity.y / radius - AngularVelocity) * Load * radius;
-            float frictionTorqueLimit = (localVelocity.y / radius - AngularVelocity) / deltaTime * inertia;
+            float frictionTorque = frictionCurve.Evaluate(slip.y) * Load * radius;
+            float frictionTorqueLimit = (slip.y / radius) / deltaTime * inertia;
 
             // caalculate the net torque
             float netTorque = frictionTorque;
@@ -162,9 +178,8 @@ namespace VehiclePhysics
             }
             longitudinalForce = longitudinalForce / radius;
 
-            // Lateral force
-            float lateralForce = 0.0f;
-            lateralForce = frictionCurve.Evaluate(-localVelocity.x) * Load;
+            // Lateral force, alternative friction : regular friction
+            float lateralForce = lowSpeedFriction ? Load * Mathf.InverseLerp(lowSpeedfrictionThreshold, 0, slip.x) : frictionCurve.Evaluate(-localVelocity.x) * Load;
             lateralForce = Mathf.Clamp(combinedCounterForce.x, -Mathf.Abs(lateralForce), Mathf.Abs(lateralForce));
 
             wheelForce = projectedForward * (longitudinalForce) + projectedRight * (lateralForce);

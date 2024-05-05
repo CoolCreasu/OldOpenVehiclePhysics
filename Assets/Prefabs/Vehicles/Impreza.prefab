@@ -165,6 +165,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 0.34
   mass: 20
+  lowSpeedfrictionThreshold: 3
   frictionCurve:
     serializedVersion: 2
     m_Curve:
@@ -269,6 +270,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 0.34
   mass: 20
+  lowSpeedfrictionThreshold: 3
   frictionCurve:
     serializedVersion: 2
     m_Curve:
@@ -469,6 +471,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 0.34
   mass: 20
+  lowSpeedfrictionThreshold: 3
   frictionCurve:
     serializedVersion: 2
     m_Curve:
@@ -639,6 +642,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 0.34
   mass: 20
+  lowSpeedfrictionThreshold: 3
   frictionCurve:
     serializedVersion: 2
     m_Curve:
