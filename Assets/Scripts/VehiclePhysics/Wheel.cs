@@ -5,12 +5,14 @@ namespace VehiclePhysics
     public class Wheel : MonoBehaviour
     {
         #region Variables
+        public float brakeTorque = 0.0f; // make property if working correctly!
+
         [Header("Wheel")]
         [SerializeField] private float radius = 0.34f;
         [SerializeField] private float mass = 20.0f;
 
         [Header("Friction")]
-        [SerializeField] private float lowSpeedfrictionThreshold = 3.0f; // alternative friction to prevent sliding at low slip speed
+        [SerializeField] private float lowSpeedFrictionThreshold = 3.0f; // alternative friction to prevent sliding at low slip speed
         [SerializeField] private AnimationCurve frictionCurve = new AnimationCurve();
         
         [Header("Suspension")]
@@ -127,7 +129,7 @@ namespace VehiclePhysics
 
             slip.y = localVelocity.y - AngularVelocity * radius;
             slip.x = -localVelocity.x;
-            lowSpeedFriction = slip.magnitude <= lowSpeedfrictionThreshold;
+            lowSpeedFriction = slip.magnitude <= lowSpeedFrictionThreshold;
 
             // =================================================================================================================== //
             //  Counter force calculation
@@ -152,6 +154,10 @@ namespace VehiclePhysics
             float frictionTorque = frictionCurve.Evaluate(slip.y) * Load * radius;
             float frictionTorqueLimit = (slip.y / radius) / deltaTime * inertia;
 
+            float absBrakeTorque = brakeTorque >= 0 ? brakeTorque : -brakeTorque;
+            float signedBrakeTorque = -absBrakeTorque * Mathf.Sign(AngularVelocity);
+            float brakeTorqueLimit = -AngularVelocity / deltaTime * inertia;
+
             // caalculate the net torque
             float netTorque = frictionTorque;
 
@@ -161,6 +167,11 @@ namespace VehiclePhysics
                 netTorque = frictionTorqueLimit;
             }
 
+            if ((Mathf.Sign(netTorque) == Mathf.Sign(signedBrakeTorque)) && (Mathf.Abs(netTorque) > Mathf.Abs(brakeTorqueLimit)) && (absBrakeTorque > 0))
+            {
+                netTorque = brakeTorqueLimit;
+            }
+
             // calculate the new angular velocity
             AngularVelocity = AngularVelocity + (netTorque / inertia * deltaTime);
 
@@ -168,18 +179,21 @@ namespace VehiclePhysics
 
             // Longitudinal force
             float longitudinalForce = 0.0f;
+
+            float brakeForce = Mathf.Clamp(combinedCounterForce.y * radius, -absBrakeTorque, absBrakeTorque);
+
             if (frictionTorqueLimit > 0.0f)
             {
-                longitudinalForce = -(frictionTorque > frictionTorqueLimit ? frictionTorqueLimit : frictionTorque);
+                longitudinalForce = brakeForce + -(frictionTorque > frictionTorqueLimit ? frictionTorqueLimit : frictionTorque);
             }
             else
             {
-                longitudinalForce = -(frictionTorque < frictionTorqueLimit ? frictionTorqueLimit : frictionTorque);
+                longitudinalForce = brakeForce + -(frictionTorque < frictionTorqueLimit ? frictionTorqueLimit : frictionTorque);
             }
             longitudinalForce = longitudinalForce / radius;
 
             // Lateral force, alternative friction : regular friction
-            float lateralForce = lowSpeedFriction ? Load * Mathf.InverseLerp(lowSpeedfrictionThreshold, 0, slip.x) : frictionCurve.Evaluate(-localVelocity.x) * Load;
+            float lateralForce = lowSpeedFriction ? Load * Mathf.InverseLerp(lowSpeedFrictionThreshold, 0, slip.x) : frictionCurve.Evaluate(-localVelocity.x) * Load;
             lateralForce = Mathf.Clamp(combinedCounterForce.x, -Mathf.Abs(lateralForce), Mathf.Abs(lateralForce));
 
             wheelForce = projectedForward * (longitudinalForce) + projectedRight * (lateralForce);
