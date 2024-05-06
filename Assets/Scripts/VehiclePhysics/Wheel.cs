@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace VehiclePhysics
@@ -188,11 +189,17 @@ namespace VehiclePhysics
 
             if (frictionTorqueLimit > 0.0f)
             {
-                longitudinalForce = brakeForce + -(frictionTorque > frictionTorqueLimit ? frictionTorqueLimit : frictionTorque);
+                // TODO create different calculation for low speed and high speed brake torque.
+                float friction = -(frictionTorque > frictionTorqueLimit ? frictionTorqueLimit : frictionTorque);
+
+                longitudinalForce = lowSpeedFriction ? brakeForce + friction : Mathf.Clamp(brakeForce, -Mathf.Abs(friction), Mathf.Abs(friction)) + friction;
             }
             else
             {
-                longitudinalForce = brakeForce + -(frictionTorque < frictionTorqueLimit ? frictionTorqueLimit : frictionTorque);
+                // TODO create different calculation for low speed and high speed brake torque.
+                float friction = -(frictionTorque > frictionTorqueLimit ? frictionTorqueLimit : frictionTorque);
+
+                longitudinalForce = lowSpeedFriction ? brakeForce + friction : Mathf.Clamp(brakeForce, -Mathf.Abs(friction), Mathf.Abs(friction)) + friction;
             }
             longitudinalForce = longitudinalForce / radius;
 
