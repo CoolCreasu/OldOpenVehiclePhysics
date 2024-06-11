@@ -4,11 +4,15 @@ namespace VehiclePhysics
 {
     public class Vehicle : MonoBehaviour
     {
+        public float rpm = 0.0f;
+        public float torque = 0.0f;
+        public Engine engine = new Engine();
+
         [Header("Wheels")]
-        [SerializeField] private Wheel wheelFrontLeft = default;
-        [SerializeField] private Wheel wheelFrontRight = default;
-        [SerializeField] private Wheel wheelRearLeft = default;
-        [SerializeField] private Wheel wheelRearRight = default;
+        [SerializeField] private Tyre wheelFrontLeft = default;
+        [SerializeField] private Tyre wheelFrontRight = default;
+        [SerializeField] private Tyre wheelRearLeft = default;
+        [SerializeField] private Tyre wheelRearRight = default;
 
         [SerializeField] private float maxSteerAngle = 45.0f;
         [SerializeField] private float motorTorque = 1000.0f;
@@ -28,6 +32,17 @@ namespace VehiclePhysics
             // motor torque
             throttleInput = Input.GetAxis("Vertical");
 
+            float tr = (wheelFrontLeft.ReactionTorque + wheelFrontRight.ReactionTorque) * 0.5f;
+
+            engine.EngineInput(Time.fixedDeltaTime, tr);
+
+            engine.Throttle = throttleInput;
+            engine.EngineOutput(Time.fixedDeltaTime);
+            torque = engine.Torque;
+            rpm = engine.RPM;
+
+            //torque = engine.EvaluateRPM(rpm) * throttleInput;
+
             wheelRearLeft.motorTorque = throttleInput * motorTorque;
             wheelRearRight.motorTorque = throttleInput * motorTorque;
 
@@ -38,6 +53,11 @@ namespace VehiclePhysics
             wheelFrontRight.brakeTorque = brakeForce;
             wheelRearLeft.brakeTorque = brakeForce;
             wheelRearRight.brakeTorque = brakeForce;
+        }
+
+        private void FixedUpdate()
+        {
+            
         }
     }
 }

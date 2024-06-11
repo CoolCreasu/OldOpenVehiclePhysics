@@ -128,6 +128,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7177482432029816059}
   - component: {fileID: 2099199343521578959}
+  - component: {fileID: 5398798420937604130}
   m_Layer: 0
   m_Name: Wheel_FR
   m_TagString: Untagged
@@ -225,6 +226,26 @@ MonoBehaviour:
   collisionLayers:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &5398798420937604130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3921064970082808235}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17146e2c8ec0a1a459ee9f3049f48ef9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 0.34
+  mass: 20
+  suspensionDistance: 0.5
+  springRate: 50000
+  damperRate: 2500
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &4894394767479273054
 GameObject:
   m_ObjectHideFlags: 0
@@ -235,6 +256,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6766323879240945686}
   - component: {fileID: 4532851596294423766}
+  - component: {fileID: 8369626642720558172}
   m_Layer: 0
   m_Name: Wheel_RR
   m_TagString: Untagged
@@ -326,6 +348,26 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  suspensionDistance: 0.5
+  springRate: 50000
+  damperRate: 2500
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &8369626642720558172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4894394767479273054}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17146e2c8ec0a1a459ee9f3049f48ef9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 0.34
+  mass: 20
   suspensionDistance: 0.5
   springRate: 50000
   damperRate: 2500
@@ -438,6 +480,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8408960395768853033}
   - component: {fileID: 4728798906782103334}
+  - component: {fileID: 211645379198261805}
   m_Layer: 0
   m_Name: Wheel_RL
   m_TagString: Untagged
@@ -535,6 +578,26 @@ MonoBehaviour:
   collisionLayers:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &211645379198261805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5868947518064744292}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17146e2c8ec0a1a459ee9f3049f48ef9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 0.34
+  mass: 20
+  suspensionDistance: 0.5
+  springRate: 50000
+  damperRate: 2500
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &6929679705342949689
 GameObject:
   m_ObjectHideFlags: 0
@@ -614,11 +677,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e4a0841239393f46833dd5bde1eb2b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rpm: 0
+  torque: 0
   wheelFrontLeft: {fileID: 3551061879526759021}
   wheelFrontRight: {fileID: 2099199343521578959}
   wheelRearLeft: {fileID: 4728798906782103334}
   wheelRearRight: {fileID: 4532851596294423766}
   maxSteerAngle: 45
+  motorTorque: 1000
+  brakeTorque: 8000
 --- !u!1 &7213032166605696539
 GameObject:
   m_ObjectHideFlags: 0
@@ -629,6 +696,7 @@ GameObject:
   m_Component:
   - component: {fileID: 964733451587579888}
   - component: {fileID: 3551061879526759021}
+  - component: {fileID: 5228955784837810078}
   m_Layer: 0
   m_Name: Wheel_FL
   m_TagString: Untagged
@@ -720,6 +788,26 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  suspensionDistance: 0.5
+  springRate: 50000
+  damperRate: 2500
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &5228955784837810078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7213032166605696539}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17146e2c8ec0a1a459ee9f3049f48ef9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 0.34
+  mass: 20
   suspensionDistance: 0.5
   springRate: 50000
   damperRate: 2500
